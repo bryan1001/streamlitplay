@@ -27,16 +27,33 @@ keep the number of total different ingredents to a minimum.
 don't include links just a name, a side and no directions in json:\n\n
 only respond with:
 [{{ "meal": "meal name","description": "description of meal", "ingredients": ["ingredient1"]}}]"""
-st.sidebar.code(prompt)
+# st.sidebar.code(prompt)
 import json
 meals_data = get_meals(prompt)
-st.sidebar.write(meals_data)
 meals = json.loads(meals_data)
-# v = "[" + get_meals(prompt)
-# import json
 
+# Create a list to store the selected meals
+selected_meals = []
+
+# Loop through the meals and create a checkbox for each one
 for meal in meals:
-    st.subheader(meal["meal"])
+    selected = st.checkbox(meal["meal"])
     st.write(meal["description"])
-    st.write(meal["ingredients"])
-    
+    if selected:
+        selected_meals.append(meal)
+
+# Create a set to store the ingredients
+ingredients_set = set()
+
+# Loop through the selected meals and extract the ingredients
+for meal in selected_meals:
+    for ingredient in meal["ingredients"]:
+        ingredients_set.add(ingredient)
+
+# Convert the set to a list and sort it alphabetically
+ingredients_list = sorted(list(ingredients_set))
+
+# Display the final shopping list
+st.sidebar.subheader("Shopping List")
+for ingredient in ingredients_list:
+    st.sidebar.write(ingredient)
